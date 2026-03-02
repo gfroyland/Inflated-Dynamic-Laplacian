@@ -14,3 +14,21 @@ Also included are "Project.toml" and "Manifest.toml" files which detail the pack
 
 # Downloading the Repository and Running the Code
 
+Here are the instructions to follow for the successful execution of this code on your system: 
+
+**Using a Stand Alone Julia REPL Window**
+
+1. Download and save the "Inflated-Dynamic-Laplacian" repository to your system.
+2. Open a new Julia REPL window and move to the "Inflated-Dynamic-Laplacian" directory.
+3. Type "]", followed by the commands "activate ." and "instantiate" to set up the Julia environment for this repository.
+4. If you wish to run the script for the switching Double Gyre system, move to the "DG_Switching" subfolder and run the script with the command: include("iDL_script_switching.jl"). Otherwise, to run the script for the 2-3-2 Double Gyre system, move to the "DG_232" subfolder and execute the command: include("iDL_script_232.jl").
+5. Results data and images pertinent to the inflated Dynamic Laplacian method will be stored within either the "DG_Switching" or "DG_232" subdirectories, depending on which system you have chosen.
+
+**Using VS Code**
+
+1. Download and save the "Inflated-Dynamic-Laplacian" repository to your system.
+2. Open VS Code, and open the "Inflated-Dynamic-Laplacian" folder in your workspace.
+3. Start a new Julia REPL in VS Code. Click on "Julia env" at the bottom of your VS Code window, select "(pick a folder)" from the drop down menu appearing at the top of the window, and find and select the "Inflated-Dynamic-Laplacian" folder in the system dialog.
+4. Type "]" followed by the commands "activate ." and "instantiate" to complete set up of the Julia environment for this repository.
+5. In the VS Code explorer sidebar, left-click either on the "DG_Switching" subfolder and then left-click the "iDL_script_switching.jl" file to execute this method on the switching Double Gyre system, or left-click on the "DG_232" subfolder and then left-click the "iDL_script_232.jl" file to execute this method on the 2-3-2 Double Gyre system. Whichever code you select should open at the right. Click on the right-pointing triangle icon near the top right to run.
+6. Results data and images pertinent to the inflated Dynamic Laplacian method will be stored within either the "DG_Switching" or "DG_232" subdirectories, depending on which system you have chosen.
