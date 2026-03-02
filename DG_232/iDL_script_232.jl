@@ -4,7 +4,7 @@
 # Load in the general functions necessary to execute the method
 # (e.g. generating the trajectory data, constructing the diffusion-map matrices etc.)
 println("Loading Julia packages and iDL functions...")
-include("./iDL_functions.jl")
+include("../iDL_functions.jl")
 
 # Load in a function file containing code to plot the eigenvectors produced for the 2-3-2 Double Gyre system
 include("./dg_232_plot.jl")
@@ -61,7 +61,7 @@ time_steps = t₀:Δt:τ
 
 # Define the boundary conditions in space for this system using this dirichlet Boolean variable 
 # Set dirichlet to "true" for Dirichlet BCs, or "false" for Neumann BCs
-dirichlet = true
+dirichlet = false
 
 # Solve the 2-3-2 Double Gyre system to obtain the trajectory data
 println("Generating trajectory data...")
@@ -96,8 +96,8 @@ traj_data_full = [[traj_solutions[n](time_steps[t]) for n ∈ 1:N] for t ∈ 1:T
 # Hence, to avoid altering any code in iDL_functions.jl, ϵ = 0.032/4 = 0.008 here,
 # which should still give the same results as prepared by the MATLAB code 
 # and as shown in AFK24.
-#a = 30.0601 # In the MATLAB code, this is the a value used for Neumann boundary conditions...
-a = 67.2165 # ...and this is the value used for Dirichlet boundary conditions
+a = 30.0601 # In the MATLAB code, this is the a value used for Neumann boundary conditions...
+#a = 67.2165 # ...and this is the value used for Dirichlet boundary conditions
 
 # Construct the diffusion-map matrices Pˣ(ϵ) for each time step
 # Pvec is a T-length vector of N × N matrices, each matrix representing Pˣ(ϵ) for tₖ, k = 1,...,T

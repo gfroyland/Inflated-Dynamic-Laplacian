@@ -95,7 +95,7 @@ function plot_eigvecs(V, inds_to_plot, traj_data_full, time_steps, figname)
 end
 
 # Load in the SEBA function for use below
-include("./SEBA.jl")
+include("../SEBA.jl")
 
 # This function plots SEBA vectors for the iDL using its leading spatial eigenvectors and their augmented counterparts, as was done in AFK24 (see Figure 23)
 # The inputs for this function are similar to those passed in to plot_eigvecs above (inds_to_plot is now called inds_to_use, as instead of plotting eigenvectors we use them to prepare SEBA vectors in this function)

@@ -4,7 +4,7 @@
 # Load in the general functions necessary to execute the method
 # (e.g. generating the trajectory data, constructing the diffusion-map matrices etc.)
 println("Loading Julia packages and iDL functions...")
-include("./iDL_functions.jl")
+include("../iDL_functions.jl")
 
 # Load in a function file containing code to plot the eigenvectors produced for the switching Double Gyre system
 include("./dg_switching_plot.jl")
@@ -55,7 +55,7 @@ time_steps = t₀:Δt:τ
 
 # Define the boundary conditions in space for this system using this dirichlet Boolean variable 
 # Set dirichlet to "true" for Dirichlet BCs, or "false" for Neumann BCs
-dirichlet = true
+dirichlet = false
 
 # Solve the switching Double Gyre system to obtain the trajectory data
 println("Generating trajectory data...")
