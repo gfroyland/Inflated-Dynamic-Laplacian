@@ -3,7 +3,7 @@ This repository contains Julia code used for the numerical implementation of the
 
 Jason Atnip, Gary Froyland, and Péter Koltai. "An inflated dynamic Laplacian to track the emergence and disappearance of semi-material coherent sets", 2024. https://arxiv.org/abs/2403.10360
 
-The code provided here is for three systems, with definitions and descriptions of the first two of these systems provided in Sections 6.1 and 6.3 (respectively) of the above paper. Details pertaining to the third system can be found in Section 7.3 of [1]. While the third system was not used in the above paper, results like those shown in Section 7.3 of [1] can be replicated using this code. The three systems in question are:
+The code provided here is for three systems, with definitions and descriptions of the first two of these systems provided in Sections 6.1 and 6.3 (respectively) of the above paper. Details pertaining to the third system can be found in Section 7.3 of [1]. The three systems in question are:
 
 1. The Switching Double Gyre, a flow system involving two counter-rotating gyres of unequal size within a rectangular flow domain which switch sides rapidly at the halfway point of the system's runtime; and
 2. A coherent-mixing-coherent (2-3-2) Double Gyre, another flow system with two counter-rotating gyres, this time of equal size, which undergoes two regime changes: one from a steady, coherent regime where the two rectangular gyre chambers are invariant to a regime where fluid is mixing between these gyre chambers, and then another back to the coherent regime again. Each flow regime lasts for an equal amount of time.
