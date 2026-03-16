@@ -29,7 +29,7 @@ function cs_velocity_cmcm(du, u, p, t)
     
 end
 # Add the path to the folder to which we wish to save the results data and Figures
-pathname = "./"
+pathname = "./CMCM/"
 
 # Define a grid of initial conditions for each trajectory in space
 # along with a range of time steps
