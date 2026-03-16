@@ -125,29 +125,6 @@ function findϵ(X)
 end
 
 # Build the diffusion-map matrices on each time step
-# Code prepared by Gary Froyland
-function diffusion_matrix(X, ϵ)
-
-    #X is a vector of vectors, e.g. 1000 random points in ℝ²:  X=[rand(2).*[2, 1] for i=1:1000] 
-    #ϵ is the bandwidth parameter
-    #Example call with X as above:  P, λ, λscaled, v, vscaled = diffusion_matrix(X,0.5)
-
-    n = length(X)
-
-    k = exp.(-pairwise(SqEuclidean(), X) / 4ϵ)
-    k[k.<0.007] .= 0
-
-    # normalise for density of points
-    Σk = sum(k, dims=2)
-    kbar = [k[i, j] / (Σk[i] * Σk[j]) for i = 1:n, j = 1:n]
-
-    # normalise to make a Markov matrix
-    P = sparse(stack(normalize!.(eachcol(kbar), 1)))
-
-    return P
-
-end
-
 """
     sparse_gaussian(X; eps, tau)
 
@@ -227,20 +204,6 @@ end
 # ϵ is the diffusion bandwidth parameter, taken either from the findϵ function defined earlier or as listed in AFK24.
 # T is the number of time steps taken from 0 to τ (inclusive), and hence the number of diffusion-map matrices we need to compute.
 function make_operators(traj_data_full, ϵ, T)
-
-    # Compute the diffusion-map matrices for each of the T time steps, which will be stored
-    # in a T length vector of matrices Pvec.
-    Pvec = Vector{SparseMatrixCSC{Float64,Int64}}(undef, T)
-    Threads.@threads for t = 1:T
-        Pvec[t] = diffusion_matrix(traj_data_full[t], ϵ)
-    end
-
-    # Pvec is then returned to the script
-    return Pvec
-
-end
-
-function make_operators_new(traj_data_full, ϵ, T)
 
     n_dims = length(traj_data_full[1][1])
     n_pts = length(traj_data_full[1])

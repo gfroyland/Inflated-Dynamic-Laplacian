@@ -4,7 +4,7 @@
 # Load in the general functions necessary to execute the method
 # (e.g. generating the trajectory data, constructing the diffusion-map matrices etc.)
 println("Loading Julia packages and iDL functions...")
-include("../iDL_functions.jl")
+include("./iDL_functions_dg.jl")
 
 # Load in a function file containing code to plot the eigenvectors produced for the switching Double Gyre system
 include("./dg_switching_plot.jl")
@@ -23,7 +23,7 @@ function dg_velocity_switching(du, u, p, t)
 end
 
 # Add the path to the folder to which we wish to save the results data and Figures
-pathname = "./DG_Switching/"
+pathname = "./"
 
 # Define a grid of initial conditions for each trajectory in space
 # along with a range of time steps
