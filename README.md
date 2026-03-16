@@ -22,7 +22,7 @@ Here are the instructions to follow for the successful execution of this code on
 1. Download and save the "Inflated-Dynamic-Laplacian" repository to your system.
 2. Open a new Julia REPL window and move to the "Inflated-Dynamic-Laplacian" directory.
 3. Type "]", followed by the commands "activate ." and "instantiate" to set up the Julia environment for this repository.
-4. If you wish to run the script for the switching Double Gyre system, move to the "DG_Switching" subfolder and run the script with the command: include("iDL_script_switching.jl"). To run the script for the 2-3-2 Double Gyre system, move to the "DG_232" subfolder and execute the command: include("iDL_script_232.jl"). Or, to run the script for the CMCM Childress-Soward system, move to the "CMCM" subfolder and execute the command: include("iDL_script_cmcm.jl").
+4. If you wish to run the script for the switching Double Gyre system, use the command: include("DG_Switching/iDL_script_switching.jl"). To run the script for the 2-3-2 Double Gyre system, execute the command: include("DG_232/iDL_script_232.jl"). Or, to run the script for the CMCM Childress-Soward system, execute the command: include("CMCM/iDL_script_cmcm.jl").
 5. Results data and images pertinent to the inflated Dynamic Laplacian method will be stored within either the "DG_Switching", "DG_232" or "CMCM" subdirectories, depending on which system you have chosen.
 
 **Using VS Code**
