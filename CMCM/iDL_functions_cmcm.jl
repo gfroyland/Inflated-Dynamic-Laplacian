@@ -120,8 +120,6 @@ function sparse_gaussian(X, ϵ, τ=0.007)
                 continue
             end
             d² = peuclidean(X[:, i], X[:, j], [2π, 2π])^2
-            # distance below for cylinder [0,20] x [-3,3] with x-coord periodic
-            # d² = peuclidean(X[:, i], X[:, j], [20, Inf])^2
 
             #compute kernel entry
             s = exp(-d² / 4ϵ)
@@ -233,7 +231,7 @@ function eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol)
         # and (5.4) of AFK24 and return the result
         temp = L_exp * F # First multiplication step
         Pₐ = reshape(permutedims(L_exp * stack((Pvec[k] * temp[k, :] for k ∈ 1:T), dims=1)), N * T) # Remaining multiplication steps
-        
+
         return Pₐ
 
     end

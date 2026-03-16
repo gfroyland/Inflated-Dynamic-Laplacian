@@ -156,8 +156,6 @@ function sparse_gaussian(X, ϵ, τ=0.007)
                 continue
             end
             d² = sqeuclidean(X[:,i], X[:,j])
-            # distance below for cylinder [0,20] x [-3,3] with x-coord periodic
-            # d² = peuclidean(X[:, i], X[:, j], [20, Inf])^2
 
             #compute kernel entry
             s = exp(-d² / 4ϵ)
