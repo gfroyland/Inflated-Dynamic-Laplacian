@@ -29,43 +29,6 @@ function solve_ode(velocity, init_conds, time_steps)
 
 end
 
-# Find the indices of the boundary points at each time step when we use Dirichlet BCs
-# traj_data_full is a vector of length T (the number of time steps); each element of this vector is a vector of length N (the number of trajectories), and each element of this vector is a vector of length 2 [x, y] representing the coordinates of trajectory n (n = 1,...,N) at time time_steps(t) (t = 1,...,T).
-# N is the number of trajectories
-# T is the number of time steps
-function find_boundary_points(traj_data_full, N, T)
-
-    # Define the number of neighbouring points used to determine whether or not a trajectory point is a boundary point at time t
-    # Taking roughly 1% of the total number of trajectories should work
-    num_of_neighbours = trunc(Int64, round(N/100))
-    
-    # Initialise Bmat, a vector of T sparse diagonal matrices of size N × N
-    # The n-th (n = 1,...,N) diagonal element of Bmat[t] (Bmat[t][n,n]) will take a value of 0 if the n-th trajectory is a boundary point at time t, or 1 if it is not. 
-    Bmat = Vector{SparseMatrixCSC{Float64,Int64}}(undef, T)
-
-    # Determine the boundary points on each time step
-    Threads.@threads for t = 1:T
-        # First, compute the concave hull for the set of trajectory points at time t
-        hull = concave_hull(traj_data_full[t],num_of_neighbours)
-
-        # Then, use indexin to find the indices (ranging from 1 to N) of the trajectories whose points correspond to vertices of the concave hull boundary
-        boundary_indices = indexin(hull.vertices, traj_data_full[t])
-
-        # Initialise an N-length vector of ones, and set the values of the vector at the indices corresponding to trajectories on the boundary to 0
-        Bvec = ones(N)
-        Bvec[boundary_indices] .= 0
-        
-        # Turn this vector into a sparse diagonal matrix, and remove the zero elements from it
-        Bmat_now = spdiagm(Bvec)
-        dropzeros!(Bmat_now)
-        Bmat[t] = Bmat_now
-    end
-    
-    # Return the boundary indicator matrices
-    return Bmat
-    
-end
-
 # Calculate mean nearest neighbour distances over all trajectory points in space at a particular moment in time
 # Code prepared by Gary Froyland
 function nndist(X)
@@ -125,29 +88,6 @@ function findϵ(X)
 end
 
 # Build the diffusion-map matrices on each time step
-# Code prepared by Gary Froyland
-function diffusion_matrix(X, ϵ)
-
-    #X is a vector of vectors, e.g. 1000 random points in ℝ²:  X=[rand(2).*[2, 1] for i=1:1000] 
-    #ϵ is the bandwidth parameter
-    #Example call with X as above:  P, λ, λscaled, v, vscaled = diffusion_matrix(X,0.5)
-
-    n = length(X)
-
-    k = exp.(-pairwise(SqEuclidean(), X) / 4ϵ)
-    k[k.<0.007] .= 0
-
-    # normalise for density of points
-    Σk = sum(k, dims=2)
-    kbar = [k[i, j] / (Σk[i] * Σk[j]) for i = 1:n, j = 1:n]
-
-    # normalise to make a Markov matrix
-    P = sparse(stack(normalize!.(eachcol(kbar), 1)))
-
-    return P
-
-end
-
 """
     sparse_gaussian(X; eps, tau)
 
@@ -229,20 +169,6 @@ end
 # T is the number of time steps taken from 0 to τ (inclusive), and hence the number of diffusion-map matrices we need to compute.
 function make_operators(traj_data_full, ϵ, T)
 
-    # Compute the diffusion-map matrices for each of the T time steps, which will be stored
-    # in a T length vector of matrices Pvec.
-    Pvec = Vector{SparseMatrixCSC{Float64,Int64}}(undef, T)
-    Threads.@threads for t = 1:T
-        Pvec[t] = diffusion_matrix(traj_data_full[t], ϵ)
-    end
-
-    # Pvec is then returned to the script
-    return Pvec
-
-end
-
-function make_operators_new(traj_data_full, ϵ, T)
-
     n_dims = length(traj_data_full[1][1])
     n_pts = length(traj_data_full[1])
 
@@ -288,7 +214,7 @@ end
 # tol is the convergence tolerance level for the Arnoldi method
 # If we are using Dirichlet BCs, we pass through Bmat to this function, a T-length vector of sparse diagonal matrices with the diagonal elements Bmat[t][n,n] equalling 0 if the n-th trajectory is on the boundary at time t, or 1 otherwise
 # If we are using Neumann BCs, Bmat is defined as a nothing object and only the five previously listed variables are passed through to the function
-function eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol, Bmat=nothing)
+function eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol)
 
     # Recover the number of time steps T and the number of trajectories N
     T = size(L_exp, 1)
@@ -305,17 +231,9 @@ function eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol, Bmat=nothing)
 
         # Perform the Strang splitting matrix multiplication detailed in eqs. (5.3)
         # and (5.4) of AFK24 and return the result
-        if Bmat ≡ nothing # If we are using Neumann BCs
-            temp = L_exp * F # First multiplication step
-            Pₐ = reshape(permutedims(L_exp * stack((Pvec[k] * temp[k, :] for k ∈ 1:T), dims=1)), N * T) # Remaining multiplication steps
-        else # If we are using Dirichlet BCs
-            # 1. Apply the boundary indicator matrix Bmat[k] for time k to each row of F, then multiply the result by L_exp
-            Mat1 = L_exp * stack((Bmat[k] * F[k, :] for k ∈ 1:T), dims=1)
-            # 2. Perform the next few multiplication steps (all except the last one)
-            Mat2 = L_exp * stack((Bmat[k] * Pvec[k] * Bmat[k] * Mat1[k, :] for k ∈ 1:T), dims=1)
-            # 3. Perform one last multiplication with Bmat, reshape the matrix back to a vector and return the result
-            Pₐ = reshape(permutedims(stack((Bmat[k] * Mat2[k, :] for k ∈ 1:T), dims=1)), N * T)
-        end
+        temp = L_exp * F # First multiplication step
+        Pₐ = reshape(permutedims(L_exp * stack((Pvec[k] * temp[k, :] for k ∈ 1:T), dims=1)), N * T) # Remaining multiplication steps
+        
         return Pₐ
 
     end

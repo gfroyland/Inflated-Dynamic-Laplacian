@@ -5,7 +5,7 @@
 # Load in the general functions necessary to execute the method
 # (e.g. generating the trajectory data, constructing the diffusion-map matrices etc.)
 println("Loading Julia packages and iDL functions...")
-include("../iDL_functions.jl")
+include("./iDL_functions_cmcm.jl")
 
 # Load in a function file containing code to plot the eigenvectors produced for the CMCM Childress-Soward system
 include("./cmcm_plot.jl")
@@ -29,7 +29,7 @@ function cs_velocity_cmcm(du, u, p, t)
     
 end
 # Add the path to the folder to which we wish to save the results data and Figures
-pathname = "./CMCM/"
+pathname = "./"
 
 # Define a grid of initial conditions for each trajectory in space
 # along with a range of time steps
@@ -58,10 +58,6 @@ init_conds = [[x, y] for x ∈ x_range for y ∈ y_range]
 # t0 and τ (inclusive)
 t₀, Δt, τ = 0, 2/75, 4 # Define the initial time, time step and final time
 time_steps = t₀:Δt:τ
-
-# Define the boundary conditions in space for this system using this dirichlet Boolean variable 
-# Set dirichlet to "true" for Dirichlet BCs, or "false" for Neumann BCs
-dirichlet = false
 
 # Solve the CMCM Childress-Soward system to obtain the trajectory data
 println("Generating trajectory data...")
@@ -101,13 +97,7 @@ println("Eigensolving the inflated dynamic Laplacian...")
 num_of_Λ = 20
 tol = 1e-08 # Define a tolerance for Arnoldi method convergence
 
-# If we are using Dirichlet BCs, identify the boundary points on each time step first and use these to build the boundary indicator matrices Bmat[t] on each time step to be used in the multiplication scheme for the iDL
-if dirichlet == true
-    Bmat = find_boundary_points(traj_data_full, N, T)
-    @time Λ, V, Υ = eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol, Bmat)
-elseif dirichlet == false
-    @time Λ, V, Υ = eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol)
-end
+@time Λ, V, Υ = eigensolve_iDL(Pvec, L_exp, ϵ, num_of_Λ, tol)
 
 # Classify the eigenvalues Υ as spatial or temporal and plot the spectrum
 # We shouldn't encounter any complex eigenvalues/eigenvectors in this example, but just in case pass through the real parts of Υ and V only
@@ -131,13 +121,19 @@ plot_eigvecs(real.(V), inds_to_plot, traj_data_full, time_steps, figname)
 # Again, pass through the real part of V to the function in case some eigenvectors are complex (though they shouldn't be in this example)
 inds_to_use = spat_inds[2:9]
 augment_vecs = false # Decide if you want to calculate SEBA vectors using the eigenvector augmentation technique (true) or using the iDL eigenvectors as they are (false)
-figname = pathname * "iDL_CMCM_SEBAMax_8Vecs"
-Σ = plot_max_SEBA(real.(V), inds_to_use, traj_data_full, time_steps, figname, augment_vecs)
+figname = pathname * "iDL_CMCM_SEBAMax_8Vecs_NoAug"
+Σ_noAug = plot_max_SEBA(real.(V), inds_to_use, traj_data_full, time_steps, figname, augment_vecs)
+
+# Try making another SEBA Max plot with eigenvector augmentation this time
+inds_to_use = spat_inds[2:7]
+augment_vecs = true
+figname = pathname * "iDL_CMCM_SEBAMax_12Vecs_Aug"
+Σ_Aug = plot_max_SEBA(real.(V), inds_to_use, traj_data_full, time_steps, figname, augment_vecs)
 
 # Save the trajectory data, the eigenvalue/eigenvector data, the time steps taken and key parameters relevant to the iDL method to a JLD2 file
 
 println("Saving the results...")
 filenamesave = pathname * "iDL_Results_CMCM.jld2"
-jldsave(filenamesave; Λ, V, Υ, Σ, traj_data_full, time_steps, ϵ, a, spat_inds, temp_inds)
+jldsave(filenamesave; Λ, V, Υ, Σ_noAug, Σ_Aug, traj_data_full, time_steps, ϵ, a, spat_inds, temp_inds)
 
 println("The inflated dynamic Laplacian calculations are complete!")
