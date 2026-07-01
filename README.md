@@ -1,7 +1,7 @@
 # Inflated-Dynamic-Laplacian
 This repository contains Julia code used for the numerical implementation of the trajectory-based version of the inflated Dynamic Laplacian, a mathematical operator used to identify the birth and death of coherent sets within a velocity system over a finite time interval. This trajectory-based method is described in the paper: 
 
-Jason Atnip, Gary Froyland, and Péter Koltai. "An inflated dynamic Laplacian to track the emergence and disappearance of semi-material coherent sets", <Journal of Nonlinear Science</i>. To appear, 2026. https://arxiv.org/abs/2403.10360
+Jason Atnip, Gary Froyland, and Péter Koltai. "An inflated dynamic Laplacian to track the emergence and disappearance of semi-material coherent sets", <i>Journal of Nonlinear Science</i>. To appear, 2026. https://arxiv.org/abs/2403.10360
 
 The code provided here is for three systems, with definitions and descriptions of the first two of these systems provided in Sections 6.1 and 6.3 (respectively) of the above paper. Details pertaining to the third system can be found in Section 7.3 of [1]. The three systems in question are:
 
