@@ -36,4 +36,8 @@ Here are the instructions to follow for the successful execution of this code on
 
 # References
 
-[1] Gary Froyland and Péter Koltai. "Detecting the birth and death of finite-time coherent sets", Communications on Pure and Applied Mathematics 76 (2023), no. 12, pp. 3642-3684. https://doi.org/10.1002/cpa.22115
+[1] Gary Froyland and Péter Koltai. "Detecting the birth and death of finite-time coherent sets", <i>Communications on Pure and Applied Mathematics</i>, vol. 76 (2023), no. 12, pp. 3642-3684. https://doi.org/10.1002/cpa.22115
+
+[2] Jason Atnip, Gary Froyland, and Péter Koltai. "An inflated dynamic Laplacian to track the emergence and disappearance of semi-material coherent sets", <i>Journal of Nonlinear Science</i>, vol. 36 (2026).
+https://doi.org/10.1007/s00332-026-10301-8
+
